@@ -1,56 +1,75 @@
-# Welcome to your Expo app 👋
+# NestMate NL
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+A free home manual for first-time renters, students and expats in the Netherlands. No ads, no subscriptions, no account.
 
-## Get started
+Built with Expo (SDK 58), Expo Router and TypeScript for iOS, Android and web.
 
-1. Install dependencies
+## What's in Phase 1
 
-   ```bash
-   npm install
-   ```
+| Area | Status |
+| --- | --- |
+| Onboarding: postcode lookup (PDOK), heating type, energy contract | Working |
+| Home: "Something broke?", energy tip, today's cleaning | Working |
+| Cleaning calendar: regular and deep cleaning routines with reminders | Working (reminders on iOS/Android only) |
+| Fix-It guides: 3 starter guides with steps and shopping list | Working, illustrations to do |
+| Something Broke flow: safety check → DIY guide or landlord | Working, landlord letter draft to do |
+| Energy: cheap hours by contract and province | Working, public holidays to do |
+| My Area: contacts and official links | Partly, waste rules per city to do |
+| Where to Buy: Dutch names and shop types | Partly, OpenStreetMap shop map to do |
 
-2. Start the app
+Search the code for `TODO` to find the next tasks.
 
-   ```bash
-   npx expo start
-   ```
-
-In the output, you'll find options to open the app in a
-
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **src/app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
+## Run it
 
 ```bash
-npm run reset-project
+npm install
+npx expo start
 ```
 
-This command will move the starter code to the **example** directory and create a blank **src/app** directory where you can start developing.
+Then press `i` (iOS simulator), `a` (Android emulator) or `w` (web), or scan the QR code with Expo Go.
 
-### Other setup steps
+Before committing:
 
-- To set up ESLint for linting, run `npx expo lint`, or follow our guide on ["Using ESLint and Prettier"](https://docs.expo.dev/guides/using-eslint/)
-- If you'd like to set up unit testing, follow our guide on ["Unit Testing with Jest"](https://docs.expo.dev/develop/unit-testing/)
-- Learn more about the TypeScript setup in this template in our guide on ["Using TypeScript"](https://docs.expo.dev/guides/typescript/)
+```bash
+npx tsc --noEmit
+npx expo lint
+```
 
-## Learn more
+## Project layout
 
-To learn more about developing your project with Expo, look at the following resources:
+```
+src/
+  app/                 Routes (Expo Router). Every file is a screen.
+    (tabs)/            Home, Guides, Cleaning, Energy, My Area
+    onboarding.tsx     Postcode → heating → contract
+    broke.tsx          Something Broke flow (modal)
+    cleaning-new.tsx   Add a cleaning routine (modal)
+    guide/[id].tsx     Step-by-step guide viewer
+    buy.tsx            Where to Buy
+  components/          Themed text, shared UI (Screen, Card, Button, OptionCard), tab bars
+  constants/theme.ts   Colours, fonts, spacing (matches the Figma board)
+  content/guides.ts    Guide content: original text, English + Dutch names
+  lib/
+    profile.tsx        Home profile, stored on the device (AsyncStorage)
+    cleaning.tsx       Cleaning routines, stored on the device
+    schedule.ts        Repeat rules (weekly, every 2 weeks, monthly, every 3 months…)
+    reminders.ts       Local notifications for cleaning routines
+    energy.ts          Dual-rate off-peak rules
+    pdok.ts            PDOK Locatieserver postcode lookup
+```
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+## How reminders work
 
-## Join the community
+Each upcoming cleaning date in the next 45 days is scheduled as a one-off local notification (max 60, under the iOS limit of 64). Reminders are re-synced when a routine is added, ticked off or deleted, and when the app starts. Nothing is sent to a server.
 
-Join our community of developers creating universal apps.
+Local notifications work in Expo Go. Web has no reminders.
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+## Data and privacy
+
+- Postcode lookup: [PDOK Locatieserver](https://api.pdok.nl/bzk/locatieserver/search/v3_1/ui/) (Kadaster open data). This is the only network request.
+- Everything else (profile, routines) stays on the phone.
+- Map data, when added: © OpenStreetMap contributors (ODbL).
+
+## Disclaimer
+
+NestMate NL gives general information about renting in the Netherlands. It is not legal, technical or financial advice. Your rental contract comes first. Never work on gas or mains electricity yourself. In an emergency, call 112.
